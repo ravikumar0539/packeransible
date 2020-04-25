@@ -1,5 +1,7 @@
 - name: Packer build and ASG
   hosts: localhost
+  remote_user: ubuntu
+  local_user: ubuntu
   connection: local
   vars:
     - region: "us-east-1"
