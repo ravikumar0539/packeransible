@@ -35,7 +35,7 @@
               device_type: gp2
               delete_on_termination: true
               encrypted: false
-          register: ec2_lc_info
+        register: ec2_lc_info
       - name: Get current ASG info
         ec2_asg_facts:
           name: "{{ asg }}"
