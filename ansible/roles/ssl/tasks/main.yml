@@ -8,25 +8,21 @@
 
 
 - name: create certificates directory
-  vars:
-    nginx_ssl_certificate_subject: "/CN=testingin"
-    nginx_ssl_certificate: /etc/nginx/ssl/server.crt
-    nginx_ssl_certificate_key: /etc/nginx/ssl/server.key
-    nginx_ssl_certificate_days: 365
   become: yes
   file:
-    path: "{{ item | dirname }}"
+    path:  /etc/nginx/ssl/
     state: directory
-    with_items:
-      - "{{ nginx_ssl_certificate }}"
-      - "{{ nginx_ssl_certificate_key }}"
-  
+    group: ubuntu
+    owner: ubuntu
 
 - name : create ssl certificates
   become: yes
-  command:
-     openssl req -new -nodes -x509 -subj "{{ nginx_ssl_certificate_subject }}" -days {{ nginx_ssl_certificate_days }} -keyout {{ nginx_ssl_certificate_key }} -out {{ nginx_ssl_certificate }} -extensions v3_ca
+  shell: |
+     openssl req -new -nodes -x509 -subj "/CN=testingin" -days 365 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca
   args:
-     creates: "{{ nginx_ssl_certificate }}"
+    executable: /bin/bash
+
+
+
 
 
