@@ -32,15 +32,10 @@
               delete_on_termination: true
               encrypted: false
         register: ec2_lc_info
-      - name: Get current ASG info
-        ec2_asg_info:
-          name: "{{ asg }}"
-          region: "{{ region }}"
-        register: my_asg_info
         tags:
           - test1
       - name: ec2 info
-        debug: msg={{ my_asg_info.stdout }}
+        debug: msg={{ ec2_lc_info.name }}
       - name: Updating ASG
         ec2_asg:
           name: "{{ asg }}"
@@ -51,11 +46,8 @@
           launch_config_name: "{{ ec2_lc_info.name }}"
           termination_policies: ['OldestLaunchConfiguration']
           state: present
-          min_size: "{{ my_asg_info.results[0].desired_capacity }}"
+          min_size: 2
           max_size: 3
-          desired_capacity: "{{ my_asg_info.results[0].desired_capacity }}"
-          replace_all_instances: yes
-          replace_batch_size: "{{ (my_asg_info.results[0].desired_capacity % 10) | int | abs }}"
-          wait_for_instances: True
+          desired_capacity: 1
         tags:
            - test2
