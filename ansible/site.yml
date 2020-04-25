@@ -1,0 +1,11 @@
+---
+- name: Install Git, Nginx, appcode,ssl,securesite
+  hosts: all
+  become: yes
+
+  roles:
+    - git
+    - nginx
+    - appcode
+    - ssl
+    - securesite

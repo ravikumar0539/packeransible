@@ -1,0 +1,8 @@
+server{
+        listen 443 ssl ;
+        ubuntu /var/www/html;
+        index index.html;
+        server_name  localhost;
+        ssl_certificate {{ nginx_ssl_certificate }};
+        ssl_certificate_key {{ nginx_ssl_certificate_key }};
+}

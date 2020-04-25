@@ -1,0 +1,27 @@
+---
+
+- name: Install  openssl
+  become: yes
+  apt: 
+      name: openssl 
+      state: present
+
+
+- name: create certificates directory
+  become: yes
+  file:
+    path: "{{ item | dirname }}"
+    state: directory
+    with_items:
+      - "{{ nginx_ssl_certificate  }}"
+      - "{{ nginx_ssl_certificate_key }}"
+  
+
+- name : create ssl certificates
+  become: yes
+  command:
+     openssl req -new -nodes -x509 -subj "{{ nginx_ssl_certificate_subject }}" -days {{ nginx_ssl_certificate_days }} -keyout {{ nginx_ssl_certificate_key }} -out {{ nginx_ssl_certificate }} -extensions v3_ca
+  args:
+     creates: "{{ nginx_ssl_certificate }}"
+
+

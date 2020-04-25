@@ -1,0 +1,6 @@
+---
+- name: download from git
+  git:
+    repo: https://github.com/cfjedimaster/HTML-Code-Demos.git
+    dest: /var/www/html
+

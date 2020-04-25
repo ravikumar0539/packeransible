@@ -1,0 +1,7 @@
+user: root
+nginx_ssl_certificate_subject: "/CN=testingin"
+nginx_ssl_certificate: /etc/nginx/ssl/server.crt
+nginx_ssl_certificate_key: /etc/nginx/ssl/server.key
+nginx_ssl_certificate_days: 365
+
+
