@@ -42,7 +42,7 @@
           region: "{{ region }}"
         register: my_asg_info
       - name: Updating ASG
-        c2_asg:
+        ec2_asg:
           name: "{{ asg }}"
           region: "{{ region }}"
           load_balancers: "{{ elb }}"
