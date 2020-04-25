@@ -1,0 +1,59 @@
+- name: Packer build and ASG
+  hosts: localhost
+  connection: local
+  vars:
+    - region: "us-east-1"
+    - key_name: "testengine"
+    - security_groups: 'default'
+    - asg: "mynginxasg"
+    - elb: "mynginxelb"
+  tasks:
+      - name: Getting Timestamp
+        shell: echo `date +%Y-%m-%d-%H-%M-%S`
+        register: timestamp
+      - name: Run Packer build for creating AMI
+        become: yes
+        shell: | 
+           packer build template.json | tail -1 | grep "ami-" | awk '{print $2}'
+        args:
+          executable: /bin/bash
+        register: my_ami
+      - name: AMI name
+        debug: msg={{ my_ami.stdout }}
+      - name: Creating launch configuration
+        ec2_lc:
+          name: "nginx_packer_{{timestamp.stdout}}"
+          region: "{{region}}"
+          image_id: "{{ my_ami.stdout }}"
+          assign_public_ip: "yes"
+          key_name: "{{ key_name }}"
+          security_groups: "{{ security_groups }}"
+          instance_type: t2.micro
+          volumes:
+            - device_name: /dev/xvda
+              volume_size: 8
+              device_type: gp2
+              delete_on_termination: true
+              encrypted: false
+          register: ec2_lc_info
+      - name: Get current ASG info
+        ec2_asg_facts:
+          name: "{{ asg }}"
+          region: "{{ region }}"
+        register: my_asg_info
+      - name: Updating ASG
+        c2_asg:
+          name: "{{ asg }}"
+          region: "{{ region }}"
+          load_balancers: "{{ elb }}"
+          availability_zones: [ 'us-east-1a' ]
+          vpc_zone_identifier: ['subnet-7b3ad85a']
+          launch_config_name: "{{ ec2_lc_info.name }}"
+          termination_policies: ['OldestLaunchConfiguration']
+          state: present
+          min_size: "{{ my_asg_info.results[0].desired_capacity }}"
+          max_size: 3
+          desired_capacity: "{{ my_asg_info.results[0].desired_capacity }}"
+          replace_all_instances: yes
+          replace_batch_size: "{{ (my_asg_info.results[0].desired_capacity % 10) | int | abs }}"
+          wait_for_instances: True
