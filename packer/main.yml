@@ -1,7 +1,5 @@
 - name: Packer build and ASG
   hosts: localhost
-  remote_user: ubuntu
-  local_user: ubuntu
   connection: local
   vars:
     - region: "us-east-1"
@@ -14,11 +12,7 @@
         shell: echo `date +%Y-%m-%d-%H-%M-%S`
         register: timestamp
       - name: Run Packer build for creating AMI
-        become: yes
-        shell: | 
-           packer build template.json | tail -1 | grep "ami-" | awk '{print $2}'
-        args:
-          executable: /bin/bash
+        shell: packer build my_test_build.json | tail -1 | grep "ami-" | awk '{print $2}'
         register: my_ami
       - name: AMI name
         debug: msg={{ my_ami.stdout }}
@@ -39,10 +33,14 @@
               encrypted: false
         register: ec2_lc_info
       - name: Get current ASG info
-        ec2_asg_facts:
+        ec2_asg_info:
           name: "{{ asg }}"
           region: "{{ region }}"
         register: my_asg_info
+        tags:
+          - test1
+      - name: ec2 info
+        debug: msg={{ my_asg_info.stdout }}
       - name: Updating ASG
         ec2_asg:
           name: "{{ asg }}"
@@ -59,3 +57,5 @@
           replace_all_instances: yes
           replace_batch_size: "{{ (my_asg_info.results[0].desired_capacity % 10) | int | abs }}"
           wait_for_instances: True
+        tags:
+           - test2
