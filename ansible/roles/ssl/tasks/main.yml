@@ -8,12 +8,17 @@
 
 
 - name: create certificates directory
+  vars:
+    nginx_ssl_certificate_subject: "/CN=testingin"
+    nginx_ssl_certificate: /etc/nginx/ssl/server.crt
+    nginx_ssl_certificate_key: /etc/nginx/ssl/server.key
+    nginx_ssl_certificate_days: 365
   become: yes
   file:
     path: "{{ item | dirname }}"
     state: directory
     with_items:
-      - "{{ nginx_ssl_certificate  }}"
+      - "{{ nginx_ssl_certificate }}"
       - "{{ nginx_ssl_certificate_key }}"
   
 

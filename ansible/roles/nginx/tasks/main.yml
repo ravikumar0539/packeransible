@@ -8,10 +8,10 @@
     update_cache: true
 
 
-#- name: Removing default nginx config
- # include_vars:
-  #  file: 
-   #   name=/etc/nginx/sites-enabled/default state=absent
+- name: Removing default nginx config
+  include_vars:
+    file: 
+      name=/etc/nginx/sites-enabled/default state=absent
 
 
 - name: Install system nginx config

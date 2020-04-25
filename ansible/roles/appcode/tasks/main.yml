@@ -2,5 +2,17 @@
 - name: download from git
   git:
     repo: https://github.com/cfjedimaster/HTML-Code-Demos.git
-    dest: /var/www/html
+    dest: /var/www/html/appcode
+
+- name: Copy growlerfriday nginx configuration 
+  template:
+      src: templates/appcode.conf.j2
+      dest: /etc/nginx/sites-available/appcode.conf
+
+- name: Create sites-enabled symlink for nginx growlerfriday port 80 configuration
+  file:
+    src: /etc/nginx/sites-available/appcode.conf
+    dest: /etc/nginx/sites-enabled/appcode.conf
+    state: link
+  notify: restart nginx
 
