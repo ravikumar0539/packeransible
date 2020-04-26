@@ -1,12 +1,6 @@
 - name: Packer build and ASG
   hosts: localhost
-  connection: local
-  vars:
-    - region: "us-east-1"
-    - key_name: "testengine"
-    - security_groups: 'default'
-    - asg: "mynginxasg"
-    - elb: "mynginxelb"
+  connection: local"
   tasks:
       - name: Getting Timestamp
         shell: echo `date +%Y-%m-%d-%H-%M-%S`
@@ -19,11 +13,11 @@
       - name: Creating launch configuration
         ec2_lc:
           name: "nginx_packer_{{timestamp.stdout}}"
-          region: "{{region}}"
+          region: "{{ region }}"
           image_id: "{{ my_ami.stdout }}"
           assign_public_ip: "yes"
           instance_profile_name: s3readrole
-          key_name: "{{ key_name }}"
+          key_name: "testengine"
           security_groups: "{{ security_groups }}"
           instance_type: t2.micro
           volumes:
@@ -39,7 +33,7 @@
         debug: msg={{ ec2_lc_info.name }}
       - name: Updating ASG
         ec2_asg:
-          name: "{{ asg }}"
+          name: "mynginxasg"
           region: "{{ region }}"
           load_balancers: "{{ elb }}"
           availability_zones: [ 'us-east-1a' ]
@@ -47,7 +41,7 @@
           launch_config_name: "{{ ec2_lc_info.name }}"
           termination_policies: ['OldestLaunchConfiguration']
           state: present
-          min_size: 2
+          min_size: 1
           max_size: 3
           desired_capacity: 1
         tags:
