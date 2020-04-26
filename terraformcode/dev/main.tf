@@ -7,6 +7,8 @@ variable "vpc" {
 variable "countin" {
 }
 
+variable "region" {
+}
 
 
 provider "aws" {
@@ -45,5 +47,5 @@ module "dnsroute53" {
 
 resource "local_file" "foo" {
     content  = "security_groups: ${module.myvpc.security}\nelb: ${module.loadbalancer.elbname}\nalbname: ${module.loadbalancer.albname}\nregion: ${var.region}"
-    filename = "${path.module}/packer/group_vars/main.yml"
+    filename = "${path.module}/packer/group_vars/all"
 }

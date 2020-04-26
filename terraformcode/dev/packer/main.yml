@@ -13,7 +13,7 @@
       - name: Creating launch configuration
         ec2_lc:
           name: "nginx_packer_{{timestamp.stdout}}"
-          region: "{{region}}"
+          region: "{{ region }}"
           image_id: "{{ my_ami.stdout }}"
           assign_public_ip: "yes"
           instance_profile_name: s3readrole
@@ -41,7 +41,7 @@
           launch_config_name: "{{ ec2_lc_info.name }}"
           termination_policies: ['OldestLaunchConfiguration']
           state: present
-          min_size: 2
+          min_size: 1
           max_size: 3
           desired_capacity: 1
         tags:
