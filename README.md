@@ -6,7 +6,7 @@ For terraform :
  Private route53 hosted zone and CNAME entry for both ALB and ELB 
  S3 role
 
-For Ansible packer job: 
+For Ansible packer job1: 
 Tasks :
   Install webserver (Nginx)
   Download code from git
